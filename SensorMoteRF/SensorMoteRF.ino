@@ -1,20 +1,37 @@
-// You must download and install the Adafruit BMP085 library.
-// The library and installation instructions are available here:
-// https://github.com/adafruit/Adafruit-BMP085-Library
+// Original Sketch by kippkitts LLC, 2013
+//
+// Last version by Kippkitts: 15-April-2013 04:00 EST
+
+// Currently being modified by cjferes
+// Converted raw data into real data:
+// - Sensor BMP085: pressure in atm and temperature in °C or °F
+// - Sensor TEMT6000: ambient light intensity in lux
+// - Sensor HIH-4030: relative Humidity (RH) in %
+// - Sensor Electret Microphone: sound wave, currently in dB
+// ON WORK:
+// - Sensor Gas Sensor: Air quality 
+// - Sensor LT5534: RF Detector
+// - XBee: getting them to talk to each other
+
+
+// LIBRARIES:
+// You must download and install:
+// 1) Adafruit BMP085 library. Available in https://github.com/adafruit/Adafruit-BMP085-Library
+// 2) XBee:
 
 #include <math.h> //math library for log10()
 #include <Wire.h>
 #include "Adafruit_BMP085.h"
 
+
+// INITIAL SETTINGS
 Adafruit_BMP085 bmp;
- 
-// Last version by Kippkitts: 15-April-2013 04:00 EST
-// Currently being modified by cjferes
+
+char tempUnits="C"; //C for Celcius, F for Farenheit
 
 #define BMP085_ADDRESS 0x77  // I2C address of BMP085
 #define CODE_VERSION 0.9
 #define SILENT_VALUE 380  // Starting neutral microphone value (self-correcting)
-
 
 // ********** START DIGITAL PINS *************
 //
@@ -57,13 +74,15 @@ const int gasPin = A3;
 // Node
 const int nodeID = 1;
 
-// variables
+// Sensing variables
 int light;
 int humid;
 int gasValue;
 int button;
 int temp;
 int micVal = 0;
+double temperature;
+double pressure;
 
 
 // SETUP ------------------------------------------------------------------------------------------------------
@@ -118,12 +137,22 @@ void loop() {
   // read the state of the switch into a local variable:
   button = digitalRead(butPin);
   digitalWrite(motn_led, button);
- 
+  
+  // Sensed variables
   light = analogRead(temt6000)*5.0/1024*100*2; //converted raw data into lux
   humid = 0.1628*(analogRead(hih4030)-26.667); //converted raw data into RH %
+  temperature=bmp.readTemperature(); //get temperature in Celcius (given directly by sensor)
+  if (tempUnits=="F") {
+   temperature=temperature*9/5+32; //convert Celcius in Farenheit
+  }
+  pressure=bmp.readPressure()*9.86923267/1000000 //pressure in atm
+  //micVal = getSound();  // get sound level with kippkitt's function
+  micVal=getSoundPeakToPeak(); //get sound using my function
+  
+  //ON WORK
   gasValue =  analogRead(gasPin);
-  //micVal = getSound(); 
- micVal=getSoundPeakToPeak();
+  
+ 
  
   // Output
   Serial.print("Hello PC! My Xbee is node ");
@@ -137,15 +166,17 @@ void loop() {
   Serial.print( light );
   Serial.print( " lx, Mic = " );
   Serial.print( micVal );
-  Serial.print( ", Gas or RF = " );
+  Serial.print( "dB, Gas or RF = " );
   Serial.print( gasValue );
 
   Serial.print(", Temperature = ");
-  Serial.print(bmp.readTemperature());
-  Serial.print(" *C, ");
+  Serial.print(temperature);
+  Serial.print(" *");
+  Serial.print(tempUnits);
+  Serial.print(", ");
  
   Serial.print("Pressure = ");
-  Serial.print(bmp.readPressure()*9.86923267/1000000);
+  Serial.print(pressure);
   Serial.println(" atm");
 
 
@@ -164,14 +195,14 @@ void loop() {
   Serial1.print( micVal );
   Serial1.print( ", Gas or RF = " );
   Serial1.print( gasValue );
-
   Serial1.print(", Temperature = ");
-  Serial1.print(bmp.readTemperature());
-  Serial1.print(" *C, ");
- 
+  Serial1.print(temperature);
+  Serial1.print(" *");
+  Serial1.print(tempUnits);
+  Serial1.print(", ");
   Serial1.print("Pressure = ");
-  Serial1.print(bmp.readPressure());
-  Serial1.println(" Pa");
+  Serial1.print(pressure);
+  Serial1.println(" atm");
 
   digitalWrite(loop_led, LOW);
   delay(500);
