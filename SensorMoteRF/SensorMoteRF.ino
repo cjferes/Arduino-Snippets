@@ -2,6 +2,7 @@
 // The library and installation instructions are available here:
 // https://github.com/adafruit/Adafruit-BMP085-Library
 
+#include <math.h> //math library for log10()
 #include <Wire.h>
 #include "Adafruit_BMP085.h"
 
