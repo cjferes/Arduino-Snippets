@@ -208,10 +208,8 @@ int getSoundPeakToPeak(){
   // Then it converts the raw peak to peak value into dB.
   // initialization
   unsigned long startTime=millis(); //first instant of the sampling window
-  unsigned int peakToPeak=0; //initial peak to peak value
   unsigned int signalMax=0; // inital max value
   unsigned int signalMin=1024; // initial min value
-  double dB=0; //initial dB value
   
   while (millis()-startTime<samplingWindow){
     int sample=analogRead(micPin); //read the current sample of the sound wave
@@ -223,7 +221,7 @@ int getSoundPeakToPeak(){
       }
     }
   }
-  peakToPeak=signalMax-signalMin; //peak to peak amplitude = maxValue-minValue
-  dB =log10(pow(10,(2*peakToPeak-6.7)/12.6));
+  unsigned int peakToPeak=signalMax-signalMin; //peak to peak amplitude = maxValue-minValue
+  double dB = log10(pow(10,(2*3.3/1024*peakToPeak-6.7)/12.6));
   return dB;
 }
