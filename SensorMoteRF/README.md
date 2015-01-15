@@ -3,6 +3,7 @@ Original Sketch and Board by kippkitts LLC, 2013
 - Arduino Sketch available in: https://github.com/kippkitts/DataSensingLab/tree/master/DSL_Sensor_Mote
 - SensorMote Eagle files (schematic and board) available in https://github.com/kippkitts/DataSensingLab/tree/master/SensorMote_Code_Framework/Arduino
 Last version by Kippkitts: 15-April-2013 04:00 EST
+This Sketch assumes you use an Arduino Leonardo or other that has more than one hardware serial port.
 
 Currently IN DEVELOPMENT
 
