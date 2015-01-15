@@ -31,7 +31,7 @@ Adafruit_BMP085 bmp;
 String tempUnits="C"; //C for Celcius, F for Farenheit
 
 #define BMP085_ADDRESS 0x77  // I2C address of BMP085
-#define CODE_VERSION 0.9
+#define CODE_VERSION 0.1
 #define SILENT_VALUE 380  // Starting neutral microphone value (self-correcting)
 
 // ********** START DIGITAL PINS *************
