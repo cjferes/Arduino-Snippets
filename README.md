@@ -1,2 +1,5 @@
 # Arduino-Snippets
-Mostly Arduino Snippets to play around with
+Arduino Snippets to play around with.
+
+Currently:
+- 
