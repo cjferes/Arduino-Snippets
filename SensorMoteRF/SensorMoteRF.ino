@@ -254,6 +254,6 @@ int getSoundPeakToPeak(){
     }
   }
   unsigned int peakToPeak=signalMax-signalMin; //peak to peak amplitude = maxValue-minValue
-  double dB = log10(pow(10,(2*3.3/1024*peakToPeak-6.7)/12.6));
+  double dB = pow(10,(log10(5.0/1024*peakToPeak)+12.77)/6.7511); // 5.0/1024 because AVCC=5V
   return dB;
 }
