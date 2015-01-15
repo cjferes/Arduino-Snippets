@@ -121,8 +121,8 @@ void loop() {
   light = analogRead(temt6000)*5.0/1024*100*2; //converted raw data into lux
   humid = 0.1628*(analogRead(hih4030)-26.667); //converted raw data into RH %
   gasValue =  analogRead(gasPin);
-  micVal = getSound(); 
-
+  //micVal = getSound(); 
+ micVal=getSoundPeakToPeak();
  
   // Output
   Serial.print("Hello PC! My Xbee is node ");
@@ -181,6 +181,7 @@ void loop() {
 //
 // Does something sensible(ish) with the microphone input
 
+// Kippkitt's function to get sound level
 int getSound() {
   static int average = SILENT_VALUE; // stores the neutral position for the mic
   static int avgEnvelope = 0; // stores the average sound pressure level
@@ -197,4 +198,31 @@ int getSound() {
     average = (avgSmoothing * average + sound) / (avgSmoothing + 1); //create a new average
   }
   return envelope;
+}
+
+int getSoundPeakToPeak(){
+  // This function gets the sound level in dB.
+  // First, it finds the raw peak to peak value of the sound wave within a defined time interval (sampling window)
+  // using iterations to define the current maxima and minima of the sound wave.
+  // Then it converts the raw peak to peak value into dB.
+  // initialization
+  unsigned long startTime=millis(); //first instant of the sampling window
+  unsigned int peakToPeak=0; //initial peak to peak value
+  unsigned int signalMax=0; // inital max value
+  unsigned int signalMin=1024; // initial min value
+  double dB=0; //initial dB value
+  
+  while (millis()-startTime<samplingWindow){
+    int sample=analogRead(micPin); //read the current sample of the sound wave
+    if (sample<1024) {
+      if (sample>signalMax){
+        signalMax=sample; //update new maxima of the sound wave
+      } else if (sample<signalMin){
+        signalMin=sample; //update new minima of the sound wave
+      }
+    }
+  }
+  peakToPeak=signalMax-signalMin; //peak to peak amplitude = maxValue-minValue
+  dB =log10(pow(10,(2*peakToPeak-6.7)/12.6));
+  return dB;
 }
