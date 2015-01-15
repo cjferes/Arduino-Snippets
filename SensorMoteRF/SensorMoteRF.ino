@@ -1,5 +1,7 @@
-// Original Sketch by kippkitts LLC, 2013
-//
+// Arduino Sketch for the SensorMote from Kippkitts
+// Original Sketch and Board by kippkitts LLC, 2013
+// - Arduino Sketch available in: https://github.com/kippkitts/DataSensingLab/tree/master/DSL_Sensor_Mote
+// - SensorMote Eagle files (schematic and board) available in https://github.com/kippkitts/DataSensingLab/tree/master/SensorMote_Code_Framework/Arduino
 // Last version by Kippkitts: 15-April-2013 04:00 EST
 
 // Currently being modified by cjferes
@@ -12,7 +14,6 @@
 // - Sensor Gas Sensor: Air quality 
 // - Sensor LT5534: RF Detector
 // - XBee: getting them to talk to each other
-
 
 // LIBRARIES:
 // You must download and install:
@@ -27,7 +28,7 @@
 // INITIAL SETTINGS
 Adafruit_BMP085 bmp;
 
-char tempUnits="C"; //C for Celcius, F for Farenheit
+String tempUnits="C"; //C for Celcius, F for Farenheit
 
 #define BMP085_ADDRESS 0x77  // I2C address of BMP085
 #define CODE_VERSION 0.9
@@ -83,7 +84,7 @@ int temp;
 int micVal = 0;
 double temperature;
 double pressure;
-
+const int samplingWindow=50;
 
 // SETUP ------------------------------------------------------------------------------------------------------
 
@@ -145,7 +146,7 @@ void loop() {
   if (tempUnits=="F") {
    temperature=temperature*9/5+32; //convert Celcius in Farenheit
   }
-  pressure=bmp.readPressure()*9.86923267/1000000 //pressure in atm
+  pressure=bmp.readPressure()*9.86923267/1000000; //pressure in atm
   //micVal = getSound();  // get sound level with kippkitt's function
   micVal=getSoundPeakToPeak(); //get sound using my function
   
